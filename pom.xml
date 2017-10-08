@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>Matcha</groupId>
+    <artifactId>Conviction</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+
+    <modules>
+        <module>Common</module>
+        <module>Starter</module>
+        <module>Web</module>
+        <module>Controller</module>
+        <module>Model</module>
+        <module>Dao</module>
+        <module>DaoApi</module>
+        <module>Service</module>
+        <module>ServiceApi</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <model.version>1.0.0</model.version>
+        <spring.version>4.3.11.RELEASE</spring.version>
+        <mysql.version>6.0.6</mysql.version>
+        <mybatis.version>3.4.4</mybatis.version>
+        <mybatis.spring.version>1.3.1</mybatis.spring.version>
+        <dbcp2.version>2.1.1</dbcp2.version>
+        <java.servlet.version>4.0.0</java.servlet.version>
+        <tomcat.version>9.0.0.M11</tomcat.version>
+        <tomcat.jaspic.version>9.0.0.M26</tomcat.jaspic.version>
+        <dubbo.version>2.5.5</dubbo.version>
+        <junit.version>4.12</junit.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <slf4j.log4j.version>1.7.25</slf4j.log4j.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>ALICloudMaven</id>
+            <name>ALICloudMaven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>

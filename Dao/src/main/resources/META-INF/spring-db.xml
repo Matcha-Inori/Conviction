@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value type="org.springframework.core.io.Resource">classpath:META-INF/dbConfig.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="basicDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="${mysql.jdbc.drive}"></property>
+        <property name="url" value="${mysql.jdbc.url}"></property>
+        <property name="username" value="${mysql.jdbc.user}"></property>
+        <property name="password" value="${mysql.jdbc.password}"></property>
+        <property name="defaultAutoCommit" value="${mysql.jdbc.defaultAutoCommit}"></property>
+        <!-- 设置数据库事务隔离级别为TRANSACTION_REPEATABLE_READ -->
+        <property name="defaultTransactionIsolation" value="${mysql.jdbc.defaultTransactionIsolation}"></property>
+        <property name="maxTotal" value="${mysql.jdbc.maxTotal}"></property>
+        <property name="initialSize" value="${mysql.jdbc.initialSize}"></property>
+        <property name="maxIdle" value="${mysql.jdbc.maxIdle}"></property>
+        <property name="minIdle" value="${mysql.jdbc.minIdle}"></property>
+        <!-- 池在抛出异常前等待的一个连接被归还的最大毫秒数设置为3分钟 -->
+        <property name="maxWaitMillis" value="${mysql.jdbc.maxWaitMillis}"></property>
+        <!-- 每30秒运行一次空闲连接回收器 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${mysql.jdbc.timeBetweenEvictionRunsMillis}"></property>
+    </bean>
+
+    <context:annotation-config></context:annotation-config>
+
+</beans>
