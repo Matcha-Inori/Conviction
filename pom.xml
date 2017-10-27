@@ -34,6 +34,7 @@
         <tomcat.version>9.0.0.M11</tomcat.version>
         <tomcat.jaspic.version>9.0.0.M26</tomcat.jaspic.version>
         <dubbo.version>2.5.5</dubbo.version>
+        <jedis.version>2.9.0</jedis.version>
         <junit.version>4.12</junit.version>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j.log4j.version>1.7.25</slf4j.log4j.version>
