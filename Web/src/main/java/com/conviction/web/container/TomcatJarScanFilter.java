@@ -1,4 +1,4 @@
-package com.conviction.starter.container;
+package com.conviction.web.container;
 
 import com.conviction.common.util.StringUtil;
 import org.apache.tomcat.JarScanFilter;

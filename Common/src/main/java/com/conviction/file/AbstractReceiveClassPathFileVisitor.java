@@ -1,7 +1,5 @@
 package com.conviction.file;
 
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,12 +42,6 @@ public abstract class AbstractReceiveClassPathFileVisitor<RESULT_TYPE>
     protected void addResult(RESULT_TYPE result)
     {
         this.resultCollection.add(result);
-    }
-
-    @Override
-    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
-    {
-        return FileVisitResult.CONTINUE;
     }
 
     @Override

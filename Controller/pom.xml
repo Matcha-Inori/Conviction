@@ -18,6 +18,12 @@
             <version>${model.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>Matcha</groupId>
+            <artifactId>ServiceApi</artifactId>
+            <version>${model.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
         <dependency>
             <groupId>org.springframework</groupId>

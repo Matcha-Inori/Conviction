@@ -1,4 +1,4 @@
-package com.conviction.starter.container.info;
+package com.conviction.web.container.info;
 
 public interface TomcatContainerInfo
 {

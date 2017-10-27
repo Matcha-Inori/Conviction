@@ -6,7 +6,7 @@ import com.conviction.common.util.StringUtil;
 import com.conviction.environment.IEnvironment;
 import com.conviction.starter.constant.StarterConstant;
 
-public class WebStarter
+public class Starter
 {
     private static final String CONTAINER_PROPERTY_NAME;
 
@@ -20,6 +20,9 @@ public class WebStarter
 
     public static void main(String[] args)
     {
+        //设置log4j配置文件的位置
+        System.setProperty("log4j.configuration", "META-INF/log/log4jConfig.properties");
+
         ExtensionLoader<IEnvironment> environmentLoader = ExtensionLoader.getExtensionLoader(IEnvironment.class);
         IEnvironment iEnvironment = environmentLoader.getDefaultExtension();
 
@@ -36,25 +39,6 @@ public class WebStarter
 
         ExtensionLoader<Container> containerExtensionLoader = ExtensionLoader.getExtensionLoader(Container.class);
         Container container = containerExtensionLoader.getExtension(containerName);
-        Runtime runtime = Runtime.getRuntime();
-        runtime.addShutdownHook(new CloseThread(container));
         container.start();
-    }
-
-    private static class CloseThread extends Thread
-    {
-        private Container container;
-
-        public CloseThread(Container container)
-        {
-            super("ConvictionCloseThread");
-            this.container = container;
-        }
-
-        @Override
-        public void run()
-        {
-            container.stop();
-        }
     }
 }

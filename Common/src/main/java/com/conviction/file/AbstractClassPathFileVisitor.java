@@ -78,4 +78,10 @@ public abstract class AbstractClassPathFileVisitor implements IClassPathFileVisi
         logger.error(ClassPathFileVisitorInfo.VISIT_FILE_ERROR, exc);
         return FileVisitResult.SKIP_SUBTREE;
     }
+
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+    {
+        return FileVisitResult.CONTINUE;
+    }
 }

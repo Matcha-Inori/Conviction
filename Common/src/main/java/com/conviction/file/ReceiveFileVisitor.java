@@ -5,13 +5,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class CommonFileVisitor extends AbstractReceiveClassPathFileVisitor<String>
+public class ReceiveFileVisitor extends AbstractReceiveClassPathFileVisitor<String>
 {
     private Optional<BiFunction> fileVisitFunctionOptional;
 
-    public CommonFileVisitor(String basePathStr,
-                             boolean visitDirectory,
-                             BiFunction<Path, BasicFileAttributes, String> fileVisitFunction)
+    public ReceiveFileVisitor(String basePathStr,
+                              boolean visitDirectory,
+                              BiFunction<Path, BasicFileAttributes, String> fileVisitFunction)
     {
         super(basePathStr, visitDirectory);
         this.fileVisitFunctionOptional = Optional.ofNullable(fileVisitFunction);

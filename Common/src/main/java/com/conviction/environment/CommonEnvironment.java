@@ -1,22 +1,20 @@
 package com.conviction.environment;
 
-import com.conviction.common.util.ClassLoaderUtil;
 import com.conviction.environment.info.EnvironmentInfo;
+import com.conviction.file.AbstractClassPathFileVisitor;
+import com.conviction.file.IClassPathFileVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class CommonEnvironment implements IEnvironment
 {
@@ -40,27 +38,8 @@ public class CommonEnvironment implements IEnvironment
 
     private void load()
     {
-        try
-        {
-            ClassLoader classLoader = ClassLoaderUtil.findClassLoader();
-            Enumeration<URL> enumeration = classLoader.getResources(PROPERTIES_FILE_POSITION);
-            if(null == enumeration) return;
-            URL resourceURL;
-            URI resourceURI;
-            Path resourcePath;
-            while(enumeration.hasMoreElements())
-            {
-                resourceURL = enumeration.nextElement();
-                resourceURI = resourceURL.toURI();
-                resourcePath = Paths.get(resourceURI);
-                if(!Files.isDirectory(resourcePath)) continue;
-                Files.walkFileTree(resourcePath, new CommonFileVisitor(resourcePath));
-            }
-        }
-        catch (IOException | URISyntaxException e)
-        {
-            logger.error(EnvironmentInfo.LOAD_CONFIG_FAIL, e);
-        }
+        IClassPathFileVisitor<Path> fileVisitor = new EnvironmentFileVisitor();
+        fileVisitor.startVisit();
     }
 
     @Override
@@ -75,6 +54,21 @@ public class CommonEnvironment implements IEnvironment
         Properties properties = propertiesMap.get(modelName);
         if(null == properties) return defaultValue;
         return properties.getProperty(propertyName, defaultValue);
+    }
+
+    @Override
+    public Map<String, String> getProperties(String modelName, String keyPrefix)
+    {
+        Properties properties = propertiesMap.get(modelName);
+        if(null == properties) return Collections.emptyMap();
+        Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+        Map<String, String> theProperties = entries.stream()
+                .filter(entry -> ((String) entry.getKey()).startsWith(keyPrefix))
+                .collect(Collectors.toMap(
+                        (entry) -> (String) entry.getKey(),
+                        (entry) -> (String) entry.getValue()
+                ));
+        return theProperties;
     }
 
     @Override
@@ -107,37 +101,25 @@ public class CommonEnvironment implements IEnvironment
         return System.setProperty(propertyName, newValue);
     }
 
-    private class CommonFileVisitor extends SimpleFileVisitor<Path>
+    private class EnvironmentFileVisitor extends AbstractClassPathFileVisitor
     {
-        private Path basePath;
-
-        public CommonFileVisitor(Path basePath)
+        public EnvironmentFileVisitor()
         {
-            this.basePath = basePath;
+            super(PROPERTIES_FILE_POSITION, true);
         }
 
         @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attributes) throws IOException
+        protected void doVisitFile(Path file, BasicFileAttributes attributes)
         {
-            if(this.basePath.equals(dir))
-                return FileVisitResult.CONTINUE;
+            Optional<Path> filePositionOptional = Optional.ofNullable(file.getParent());
+            Optional<Path> filePositionParentOptional = filePositionOptional.map(Path::getParent)
+                    .filter(filePositionParent -> filePositionParent.endsWith(this.basePath));
 
-            Path relativePath = basePath.relativize(dir);
-            int relativePathNameCount = relativePath.getNameCount();
-            if(relativePathNameCount > 1)
-                return FileVisitResult.SKIP_SUBTREE;
+            if(!filePositionParentOptional.isPresent()) return;
 
-            return FileVisitResult.CONTINUE;
-        }
+            Path filePosition = filePositionOptional.get();
 
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException
-        {
-            Path relativePath = basePath.relativize(file);
-            int relativePathNameCount = relativePath.getNameCount();
-            if(relativePathNameCount > 2)
-                return FileVisitResult.CONTINUE;
-            String modelName = relativePath.getName(0).toString();
+            String modelName = filePosition.getFileName().toString();
             Properties properties = propertiesMap.get(modelName);
             if(null == properties)
             {
@@ -156,8 +138,18 @@ public class CommonEnvironment implements IEnvironment
             {
                 logger.error(EnvironmentInfo.LOAD_CONFIG_FAIL, exception);
             }
+        }
 
-            return FileVisitResult.CONTINUE;
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attributes) throws IOException
+        {
+            //只遍历META-INF/config/和META-INF/config/ABC/这样的目录
+            if(dir.endsWith(this.basePath)) return FileVisitResult.CONTINUE;
+
+            Path parentDirectory = dir.getParent();
+            return null == parentDirectory || !parentDirectory.endsWith(this.basePath) ?
+                    FileVisitResult.SKIP_SUBTREE :
+                    FileVisitResult.CONTINUE;
         }
     }
 }

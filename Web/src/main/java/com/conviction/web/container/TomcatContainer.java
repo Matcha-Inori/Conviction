@@ -1,14 +1,12 @@
-package com.conviction.starter.container;
+package com.conviction.web.container;
 
-import com.alibaba.dubbo.common.extension.ExtensionLoader;
-import com.alibaba.dubbo.container.Container;
 import com.conviction.common.constant.CommonConstant;
 import com.conviction.common.constant.SystemPropertiesKey;
 import com.conviction.common.util.StringUtil;
-import com.conviction.environment.IEnvironment;
+import com.conviction.container.AbstractContainer;
 import com.conviction.exception.BaseRuntimeException;
-import com.conviction.starter.constant.StarterConstant;
-import com.conviction.starter.container.info.TomcatContainerInfo;
+import com.conviction.web.constant.WebConstant;
+import com.conviction.web.container.info.TomcatContainerInfo;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.LifecycleException;
@@ -20,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 
-public class TomcatContainer implements Container
+public class TomcatContainer extends AbstractContainer
 {
     private static final Logger logger;
 
@@ -40,31 +38,29 @@ public class TomcatContainer implements Container
     }
 
     private Tomcat tomcat;
-    private IEnvironment iEnvironment;
 
     public TomcatContainer()
     {
-        ExtensionLoader<IEnvironment> extensionLoader = ExtensionLoader.getExtensionLoader(IEnvironment.class);
-        iEnvironment = extensionLoader.getDefaultExtension();
+        super("TomcatContainer");
         tomcat = new Tomcat();
     }
 
     @Override
-    public void start()
+    protected void doStart()
     {
         try
         {
-            String tomcatHomeDir = iEnvironment.getProperty(StarterConstant.MODEL_NAME, TOMCAT_HOME_KEY);
+            String tomcatHomeDir = iEnvironment.getProperty(WebConstant.MODEL_NAME, TOMCAT_HOME_KEY);
             if(StringUtil.isBlank(tomcatHomeDir))
                 throw new BaseRuntimeException("Must set tomcat home!!");
 
             iEnvironment.setSystemProperty(Globals.CATALINA_HOME_PROP, tomcatHomeDir);
 
-            String tomcatDocBaseDir = iEnvironment.getProperty(StarterConstant.MODEL_NAME, TOMCAT_DOC_BASE_DIR_KEY);
+            String tomcatDocBaseDir = iEnvironment.getProperty(WebConstant.MODEL_NAME, TOMCAT_DOC_BASE_DIR_KEY);
             if(StringUtil.isBlank(tomcatDocBaseDir))
                 throw new BaseRuntimeException("Must set tomcatDocBaseDir");
 
-            String tomcatBaseDir = iEnvironment.getProperty(StarterConstant.MODEL_NAME, TOMCAT_BASE_DIR_KEY);
+            String tomcatBaseDir = iEnvironment.getProperty(WebConstant.MODEL_NAME, TOMCAT_BASE_DIR_KEY);
             if(StringUtil.isBlank(tomcatBaseDir))
             {
                 tomcatBaseDir = iEnvironment.getSystemProperty(SystemPropertiesKey.USER_DIR);
@@ -92,7 +88,7 @@ public class TomcatContainer implements Container
     }
 
     @Override
-    public void stop()
+    protected void doStop()
     {
         try
         {

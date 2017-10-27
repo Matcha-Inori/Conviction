@@ -5,5 +5,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
+    <dubbo:registry id="zookeeperRegistry" protocol="zookeeper" address="centos06:2181"></dubbo:registry>
+
+    <dubbo:reference id="loginService" protocol="dubbo" interface="com.conviction.service.ILoginService"></dubbo:reference>
 
 </beans>
